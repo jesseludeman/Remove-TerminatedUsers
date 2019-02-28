@@ -1,4 +1,5 @@
-$remote_computer = (Get-WmiObject -Class win32_userprofile -ComputerName RFD725 | Select-Object).SID
+$prompt = Read-Host "Enter a computer name to check"
+$remote_computer = (Get-WmiObject -Class win32_userprofile -ComputerName $prompt | Select-Object).SID
 $exusers = (Get-ADGroupMember "NOT RF EMPLOYED").SamAccountName
 $array = New-Object System.Collections.ArrayList
 $duplicate_users = New-Object System.Collections.ArrayList
@@ -53,9 +54,12 @@ function Remove-DuplicateUsers
         [void]$users_to_delete.Add("C:\users\$user")
     }
 
-    # Get-WmiObject -Class win32_userprofile -ComputerName RFD725 | Where-Object {$_.localpath -in $users_to_delete} | Remove-WmiObject
-
-    # Write-Output "Operation complete"
+    if ($users_to_delete)
+    {
+        Get-WmiObject -Class win32_userprofile -ComputerName $prompt | Where-Object {$_.localpath -in $users_to_delete} | Remove-WmiObject
+    }
+    
+    Write-Output "Operation complete"
 }
 
 # "Main" method here
